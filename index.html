@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>竞品雷达 - 静态版</title>
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --surface: #ffffff;
+        --line: #dce3ee;
+        --line-soft: #eaf0f7;
+        --text: #172033;
+        --muted: #65738a;
+        --blue: #145cff;
+        --blue-soft: #edf4ff;
+        --green: #20a96b;
+        --green-soft: #eaf8f0;
+        --amber: #c9851e;
+        --amber-soft: #fff5e2;
+        --shadow: 0 18px 42px rgba(32, 52, 84, 0.08);
+        font-family:
+          Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      button,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: 208px minmax(700px, 1fr) 340px;
+        min-height: 100vh;
+      }
+
+      .sidebar,
+      .insights {
+        background: #fff;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        border-right: 1px solid var(--line);
+        padding: 20px 14px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        padding: 0 8px;
+        font-size: 22px;
+        font-weight: 760;
+      }
+
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: var(--blue);
+        color: #fff;
+      }
+
+      .nav {
+        display: grid;
+        gap: 8px;
+      }
+
+      .nav button,
+      .icon-button,
+      .ghost-button,
+      .source-toggle,
+      .open-link,
+      .search-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 38px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #40506a;
+        cursor: pointer;
+      }
+
+      .nav button {
+        justify-content: flex-start;
+        padding: 0 12px;
+      }
+
+      .nav .active {
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 12px 24px rgba(20, 92, 255, 0.2);
+      }
+
+      .workspace {
+        display: grid;
+        align-content: start;
+        gap: 16px;
+        padding: 24px;
+        border-right: 1px solid var(--line);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 6px;
+        font-size: 26px;
+        line-height: 1.2;
+      }
+
+      .topbar p,
+      .subtle {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .ghost-button,
+      .icon-button {
+        border: 1px solid var(--line);
+        background: #fff;
+        padding: 0 13px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .query {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .panel-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 126px;
+        resize: vertical;
+        border: 1px solid #cfd8e6;
+        border-radius: 8px;
+        padding: 16px;
+        outline: none;
+        color: var(--text);
+        line-height: 1.75;
+      }
+
+      textarea:focus,
+      select:focus,
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid rgba(20, 92, 255, 0.16);
+        outline-offset: 2px;
+      }
+
+      .query-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .sources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .source-toggle {
+        border: 1px solid var(--line);
+        background: #fff;
+        padding: 0 14px;
+      }
+
+      .source-toggle.active {
+        border-color: #b8c9ff;
+        background: var(--blue-soft);
+        color: #063ea8;
+      }
+
+      .primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-width: 150px;
+        min-height: 46px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 14px 30px rgba(20, 92, 255, 0.23);
+        cursor: pointer;
+      }
+
+      .filters {
+        display: grid;
+        grid-template-columns: auto repeat(4, minmax(130px, 1fr));
+        gap: 10px;
+        align-items: center;
+        padding: 12px 14px;
+      }
+
+      select {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--text);
+        padding: 0 12px;
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .results-header strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .result-list {
+        display: grid;
+      }
+
+      .result-row {
+        display: grid;
+        grid-template-columns:
+          minmax(180px, 1.25fr) minmax(125px, 0.8fr) minmax(128px, 0.8fr) minmax(105px, 0.55fr)
+          minmax(260px, 1.6fr) 108px;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--line-soft);
+        background: #fff;
+      }
+
+      .product {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        gap: 12px;
+      }
+
+      .avatar {
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        width: 42px;
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #f4f7fb;
+        color: #52627a;
+        font-weight: 800;
+      }
+
+      .product h3 {
+        overflow: hidden;
+        margin: 0;
+        font-size: 15px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .product p {
+        overflow: hidden;
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .chips,
+      .audience {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        font-size: 13px;
+      }
+
+      .chip,
+      .source {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 999px;
+        padding: 4px 8px;
+      }
+
+      .chip {
+        border: 1px solid var(--line-soft);
+        background: #f9fbff;
+      }
+
+      .source.web {
+        background: var(--amber-soft);
+        color: #8a5c00;
+      }
+
+      .source.ios {
+        background: var(--blue-soft);
+        color: #1746a7;
+      }
+
+      .source.play {
+        background: var(--green-soft);
+        color: #116c43;
+      }
+
+      .score {
+        display: grid;
+        gap: 7px;
+        font-weight: 760;
+      }
+
+      .track {
+        overflow: hidden;
+        height: 7px;
+        border-radius: 999px;
+        background: #e9eef4;
+      }
+
+      .track span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--green), #58ca8c);
+      }
+
+      .reason {
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .reason p,
+      .reason small {
+        display: -webkit-box;
+        overflow: hidden;
+        margin: 0;
+        -webkit-box-orient: vertical;
+      }
+
+      .reason p {
+        color: #26354b;
+        line-height: 1.55;
+        -webkit-line-clamp: 2;
+      }
+
+      .reason small {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+        -webkit-line-clamp: 2;
+      }
+
+      .row-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .open-link,
+      .search-link {
+        border: 1px solid #b8c9ff;
+        color: var(--blue);
+        min-height: 34px;
+        padding: 0 10px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .search-link {
+        border-color: var(--line);
+        color: #40506a;
+      }
+
+      .insights {
+        position: sticky;
+        top: 0;
+        display: grid;
+        align-content: start;
+        gap: 14px;
+        height: 100vh;
+        overflow: auto;
+        padding: 24px 18px;
+      }
+
+      .insight-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .insight-top h2 {
+        margin-bottom: 5px;
+        font-size: 21px;
+      }
+
+      .summary-card,
+      .insight-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 16px;
+      }
+
+      .summary-card strong {
+        display: block;
+        color: var(--blue);
+        font-size: 36px;
+        line-height: 1;
+      }
+
+      .bars {
+        display: grid;
+        gap: 12px;
+      }
+
+      .bar-item {
+        display: grid;
+        gap: 7px;
+        font-size: 13px;
+      }
+
+      .bar-item div:first-child {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .bar {
+        overflow: hidden;
+        height: 7px;
+        border-radius: 999px;
+        background: #eef2f7;
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--blue);
+      }
+
+      .next {
+        display: grid;
+        gap: 10px;
+      }
+
+      .next p {
+        margin: 0;
+        color: #3b4960;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .empty {
+        display: grid;
+        place-items: center;
+        min-height: 320px;
+        padding: 44px 24px;
+        text-align: center;
+      }
+
+      .empty-icon {
+        display: grid;
+        place-items: center;
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 28px;
+      }
+
+      @media (max-width: 1180px) {
+        .shell {
+          grid-template-columns: 82px minmax(0, 1fr);
+        }
+
+        .brand span,
+        .nav button span {
+          display: none;
+        }
+
+        .nav button {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .workspace {
+          border-right: 0;
+        }
+
+        .insights {
+          grid-column: 2;
+          height: auto;
+          border-top: 1px solid var(--line);
+        }
+      }
+
+      @media (max-width: 880px) {
+        .shell {
+          display: block;
+        }
+
+        .sidebar {
+          position: static;
+          height: auto;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .brand span {
+          display: inline;
+        }
+
+        .nav {
+          display: flex;
+          overflow: auto;
+        }
+
+        .nav button {
+          flex: 0 0 auto;
+          justify-content: center;
+          padding: 0 12px;
+        }
+
+        .workspace,
+        .insights {
+          padding: 16px;
+        }
+
+        .topbar,
+        .query-footer,
+        .results-header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .filters {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .filters .panel-label {
+          grid-column: 1 / -1;
+        }
+
+        .result-row {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .row-actions {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .actions,
+        .sources,
+        .filters {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .primary,
+        .ghost-button,
+        .source-toggle,
+        select {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand"><div class="mark">✦</div><span>竞品雷达</span></div>
+        <nav class="nav" aria-label="主导航">
+          <button class="active" type="button">⌕ <span>探索</span></button>
+          <button type="button">▣ <span>项目空间</span></button>
+          <button type="button">↔ <span>对比分析</span></button>
+          <button type="button">▤ <span>洞察报告</span></button>
+        </nav>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <h1>探索竞品</h1>
+            <p>静态 HTML 版：输入想法后，用内置竞品库和规则匹配生成第一轮产品池。</p>
+          </div>
+          <div class="actions">
+            <button class="ghost-button" id="sampleBtn" type="button">↻ 示例想法</button>
+            <button class="ghost-button" id="exportBtn" type="button">⇩ 导出报告</button>
+          </div>
+        </header>
+
+        <section class="panel query">
+          <div class="panel-label">输入你的产品想法 <span class="subtle">越具体越好</span></div>
+          <textarea id="ideaInput" maxlength="1000"></textarea>
+          <div class="query-footer">
+            <div class="sources" aria-label="选择来源">
+              <button class="source-toggle active" data-source="web" type="button">◎ Web 网站</button>
+              <button class="source-toggle active" data-source="ios" type="button">▯ iOS App Store</button>
+              <button class="source-toggle active" data-source="play" type="button">▷ Google Play</button>
+            </div>
+            <button class="primary" id="runBtn" type="button">⌕ 开始匹配</button>
+          </div>
+        </section>
+
+        <section class="panel filters">
+          <div class="panel-label">筛选条件</div>
+          <select id="categoryFilter"><option value="all">全部分类</option></select>
+          <select id="audienceFilter"><option value="all">全部目标人群</option></select>
+          <select id="sourceFilter"><option value="all">全部来源</option></select>
+          <select id="sortMode">
+            <option value="score">相似度从高到低</option>
+            <option value="category">按分类排序</option>
+            <option value="name">按名称排序</option>
+          </select>
+        </section>
+
+        <section class="panel">
+          <div class="results-header">
+            <div>
+              <strong id="resultCount">等待匹配</strong>
+              <p class="subtle" id="resultHint">静态版适合先做方向验证；需要实时全网搜索时，用仓库里的本地完整版。</p>
+            </div>
+            <div class="subtle" id="sourceHint">相似度优先</div>
+          </div>
+          <div class="result-list" id="resultList">
+            <div class="empty">
+              <div>
+                <div class="empty-icon">⌕</div>
+                <h2>输入一个大概想法，就能拉出第一轮竞品池</h2>
+                <p class="subtle">结果会包含相似点、目标人群、分类、公开事实、PM 推断和体验链接。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="insights">
+        <div class="insight-top">
+          <div>
+            <h2>洞察概览</h2>
+            <p class="subtle" id="ideaCategory">匹配后生成</p>
+          </div>
+          <button class="icon-button" id="rerunBtn" type="button">↻</button>
+        </div>
+        <section class="summary-card">
+          <strong id="totalNumber">0</strong>
+          <span>个候选竞品</span>
+          <p class="subtle" id="topProducts">等待匹配。</p>
+        </section>
+        <section class="insight-card">
+          <h3>分类分布</h3>
+          <div class="bars" id="categoryBars"></div>
+        </section>
+        <section class="insight-card">
+          <h3>目标人群</h3>
+          <div class="bars" id="audienceBars"></div>
+        </section>
+        <section class="insight-card">
+          <h3>下一步建议</h3>
+          <div class="next">
+            <p>1. 先打开相似度最高的 5 个产品，记录首屏定位、核心流程和付费入口。</p>
+            <p>2. 把同分类竞品做功能拆解，区分基础能力和差异化能力。</p>
+            <p>3. 用外部搜索链接继续补充长尾产品，避免只看头部玩家。</p>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <script>
+      const SAMPLE_IDEA =
+        "一款结合 AI 搜索和个人知识库的生产力工具，帮助用户快速找到答案并沉淀知识，支持多端同步和团队协作。";
+
+      const PRODUCTS = [
+        {
+          name: "Perplexity",
+          url: "https://www.perplexity.ai/",
+          source: "web",
+          category: "AI 搜索 / 问答",
+          audience: ["知识工作者", "研究人员", "学生"],
+          keywords: ["ai", "搜索", "问答", "答案", "引用", "研究", "知识"],
+          fact: "公开定位是 AI 搜索与问答产品，强调带来源的答案、深度研究和资料发现。"
+        },
+        {
+          name: "Comet",
+          url: "https://www.perplexity.ai/comet",
+          source: "web",
+          category: "AI 搜索 / 问答",
+          audience: ["知识工作者", "研究人员"],
+          keywords: ["ai", "浏览器", "搜索", "自动化", "助理", "研究"],
+          fact: "Perplexity 的 AI 浏览器产品，主打浏览、搜索、总结和跨网页任务。"
+        },
+        {
+          name: "ChatGPT",
+          url: "https://chatgpt.com/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "知识工作者", "开发者"],
+          keywords: ["ai", "助手", "问答", "写作", "代码", "搜索", "知识"],
+          fact: "通用 AI 助手入口，覆盖问答、写作、代码、文件理解和多模态任务。"
+        },
+        {
+          name: "Claude",
+          url: "https://claude.ai/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["知识工作者", "团队 / 企业", "创作者"],
+          keywords: ["ai", "助手", "写作", "分析", "文档", "团队", "知识"],
+          fact: "Anthropic 的 AI 助手，常用于文档理解、写作、分析和工作流辅助。"
+        },
+        {
+          name: "Google Gemini",
+          url: "https://gemini.google.com/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "学生", "知识工作者"],
+          keywords: ["ai", "搜索", "问答", "google", "助手", "多模态"],
+          fact: "Google 的通用 AI 助手，与搜索、Workspace 和多模态能力关联紧密。"
+        },
+        {
+          name: "Microsoft Copilot",
+          url: "https://copilot.microsoft.com/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["知识工作者", "团队 / 企业", "通用用户"],
+          keywords: ["ai", "办公", "搜索", "写作", "总结", "生产力"],
+          fact: "微软 AI 助手入口，覆盖搜索、写作、办公任务和多端体验。"
+        },
+        {
+          name: "Notion",
+          url: "https://www.notion.com/",
+          source: "web",
+          category: "生产力 / 协作",
+          audience: ["产品经理", "知识工作者", "团队 / 企业"],
+          keywords: ["笔记", "文档", "协作", "项目", "知识库", "ai", "团队"],
+          fact: "文档、项目、知识库和团队协作平台，并提供 Notion AI 能力。"
+        },
+        {
+          name: "NotebookLM",
+          url: "https://notebooklm.google.com/",
+          source: "web",
+          category: "个人知识库 / 研究",
+          audience: ["学生", "研究人员", "知识工作者"],
+          keywords: ["知识库", "资料", "笔记", "研究", "总结", "问答", "ai"],
+          fact: "Google 的资料理解与研究工具，围绕用户上传资料进行问答和总结。"
+        },
+        {
+          name: "Obsidian",
+          url: "https://obsidian.md/",
+          source: "web",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "研究人员", "创作者"],
+          keywords: ["笔记", "知识库", "双链", "本地", "markdown", "沉淀"],
+          fact: "本地优先的 Markdown 知识管理工具，强调双链和个人知识网络。"
+        },
+        {
+          name: "Reflect",
+          url: "https://reflect.app/",
+          source: "web",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "创作者"],
+          keywords: ["笔记", "知识库", "ai", "双链", "沉淀", "个人"],
+          fact: "AI 辅助笔记与个人知识管理工具，强调快速记录和双链组织。"
+        },
+        {
+          name: "Mem",
+          url: "https://get.mem.ai/",
+          source: "web",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "团队 / 企业"],
+          keywords: ["ai", "笔记", "知识库", "搜索", "记忆", "沉淀"],
+          fact: "AI 笔记与知识管理产品，主打自动组织和快速找回信息。"
+        },
+        {
+          name: "Capacities",
+          url: "https://capacities.io/",
+          source: "web",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "研究人员", "创作者"],
+          keywords: ["笔记", "知识库", "对象", "研究", "沉淀"],
+          fact: "对象化个人知识管理工具，适合构建结构化知识库。"
+        },
+        {
+          name: "Tencent ima",
+          url: "https://ima.qq.com/",
+          source: "web",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "学生", "团队 / 企业"],
+          keywords: ["ai", "知识库", "搜索", "文档", "问答", "腾讯"],
+          fact: "腾讯 AI 工作台，围绕知识库、资料问答和效率场景。"
+        },
+        {
+          name: "千问",
+          url: "https://www.qianwen.com/",
+          source: "web",
+          category: "AI 搜索 / 问答",
+          audience: ["通用用户", "知识工作者", "学生"],
+          keywords: ["ai", "搜索", "问答", "助手", "阿里", "知识"],
+          fact: "阿里 AI 助手入口，覆盖问答、搜索、办公和创作能力。"
+        },
+        {
+          name: "豆包",
+          url: "https://www.doubao.com/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "学生", "创作者"],
+          keywords: ["ai", "助手", "搜索", "写作", "语音", "图片", "学习"],
+          fact: "字节跳动 AI 助手，覆盖搜索问答、创作、学习和多模态能力。"
+        },
+        {
+          name: "Kimi",
+          url: "https://kimi.moonshot.cn/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["知识工作者", "学生", "研究人员"],
+          keywords: ["ai", "文档", "长文本", "搜索", "问答", "总结"],
+          fact: "月之暗面 AI 助手，常用于长文档理解、搜索问答和资料分析。"
+        },
+        {
+          name: "DeepSeek",
+          url: "https://chat.deepseek.com/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["开发者", "学生", "知识工作者"],
+          keywords: ["ai", "助手", "推理", "代码", "问答", "搜索"],
+          fact: "DeepSeek 的聊天产品，常用于推理、代码、问答和学习场景。"
+        },
+        {
+          name: "Phind",
+          url: "https://www.phind.com/",
+          source: "web",
+          category: "开发者工具",
+          audience: ["开发者", "技术团队"],
+          keywords: ["开发", "代码", "搜索", "问答", "ai", "技术"],
+          fact: "面向开发者的 AI 搜索与问答工具，强调技术问题答案。"
+        },
+        {
+          name: "Poe",
+          url: "https://poe.com/",
+          source: "web",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "创作者", "开发者"],
+          keywords: ["ai", "助手", "机器人", "模型", "问答", "社区"],
+          fact: "Quora 的多模型 AI 对话平台，提供机器人创建和模型聚合入口。"
+        },
+        {
+          name: "You.com",
+          url: "https://you.com/",
+          source: "web",
+          category: "AI 搜索 / 问答",
+          audience: ["知识工作者", "研究人员", "通用用户"],
+          keywords: ["ai", "搜索", "问答", "研究", "答案"],
+          fact: "AI 搜索与助手产品，围绕搜索、研究和任务执行。"
+        },
+        {
+          name: "Genspark",
+          url: "https://www.genspark.ai/",
+          source: "web",
+          category: "AI 搜索 / 问答",
+          audience: ["知识工作者", "研究人员", "产品经理"],
+          keywords: ["ai", "搜索", "研究", "报告", "答案", "agent"],
+          fact: "AI 搜索和研究产品，强调生成结构化页面和研究结果。"
+        },
+        {
+          name: "Product Hunt",
+          url: "https://www.producthunt.com/",
+          source: "web",
+          category: "产品发现 / 榜单",
+          audience: ["产品人", "创业者", "开发者"],
+          keywords: ["产品", "发现", "榜单", "竞品", "startup", "工具"],
+          fact: "新品发布与发现社区，可用于挖掘早期产品和替代品。"
+        },
+        {
+          name: "Pinterest",
+          url: "https://www.pinterest.com/",
+          source: "web",
+          category: "内容社区 / 灵感",
+          audience: ["设计师", "生活方式用户", "创作者"],
+          keywords: ["图片", "灵感", "内容", "收藏", "发现", "社区"],
+          fact: "图片灵感和收藏平台，适合观察视觉发现、收藏和推荐机制。"
+        },
+        {
+          name: "小红书",
+          url: "https://www.xiaohongshu.com/",
+          source: "web",
+          category: "社区 / 内容平台",
+          audience: ["年轻用户", "消费者", "创作者"],
+          keywords: ["社区", "内容", "搜索", "消费", "种草", "生活方式"],
+          fact: "生活方式内容社区，搜索和内容决策场景强。"
+        },
+        {
+          name: "即刻",
+          url: "https://web.okjike.com/",
+          source: "web",
+          category: "社区 / 内容平台",
+          audience: ["兴趣人群", "产品人", "创作者"],
+          keywords: ["社区", "兴趣", "讨论", "动态", "内容", "发现"],
+          fact: "兴趣社区产品，适合观察话题组织和社区互动机制。"
+        },
+        {
+          name: "Canva",
+          url: "https://www.canva.com/",
+          source: "web",
+          category: "内容创作 / 设计",
+          audience: ["设计师", "运营 / 市场", "创作者"],
+          keywords: ["设计", "海报", "内容", "模板", "创作", "ai"],
+          fact: "在线设计协作工具，覆盖模板、品牌素材和 AI 创作。"
+        },
+        {
+          name: "Figma",
+          url: "https://www.figma.com/",
+          source: "web",
+          category: "内容创作 / 设计",
+          audience: ["设计师", "产品经理", "团队 / 企业"],
+          keywords: ["设计", "协作", "原型", "产品", "团队"],
+          fact: "设计协作平台，常用于界面设计、原型和团队设计系统。"
+        },
+        {
+          name: "Linear",
+          url: "https://linear.app/",
+          source: "web",
+          category: "生产力 / 协作",
+          audience: ["产品经理", "开发者", "团队 / 企业"],
+          keywords: ["项目", "任务", "需求", "协作", "路线图", "开发"],
+          fact: "面向产品和研发团队的项目与问题管理工具。"
+        },
+        {
+          name: "Trello",
+          url: "https://trello.com/",
+          source: "web",
+          category: "生产力 / 协作",
+          audience: ["团队 / 企业", "通用用户"],
+          keywords: ["看板", "任务", "项目", "协作", "流程"],
+          fact: "看板式任务和项目管理工具。"
+        },
+        {
+          name: "Slack",
+          url: "https://slack.com/",
+          source: "web",
+          category: "生产力 / 协作",
+          audience: ["团队 / 企业", "知识工作者"],
+          keywords: ["团队", "协作", "消息", "工作流", "知识"],
+          fact: "团队沟通和工作流协作平台。"
+        },
+        {
+          name: "Notion: Notes, Tasks, AI",
+          url: "https://apps.apple.com/us/app/notion-notes-tasks-ai/id1232780281",
+          source: "ios",
+          category: "生产力 / 协作",
+          audience: ["知识工作者", "产品经理", "团队 / 企业"],
+          keywords: ["笔记", "文档", "任务", "知识库", "ai", "协作"],
+          fact: "iOS 端 Notion 官方应用，覆盖笔记、任务、文档和 AI。"
+        },
+        {
+          name: "Perplexity - AI Search & Chat",
+          url: "https://apps.apple.com/us/app/perplexity-ai-search-chat/id1668000334",
+          source: "ios",
+          category: "AI 搜索 / 问答",
+          audience: ["知识工作者", "研究人员", "学生"],
+          keywords: ["ai", "搜索", "问答", "研究", "引用", "答案"],
+          fact: "iOS 端 Perplexity 应用，强调 AI 搜索、引用和研究。"
+        },
+        {
+          name: "Microsoft Copilot",
+          url: "https://apps.apple.com/us/app/microsoft-copilot/id6472538445",
+          source: "ios",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "知识工作者", "学生"],
+          keywords: ["ai", "助手", "写作", "搜索", "办公"],
+          fact: "iOS 端微软 Copilot 应用，覆盖 AI 问答、创作和办公辅助。"
+        },
+        {
+          name: "Google Gemini",
+          url: "https://apps.apple.com/us/app/google-gemini/id6477489729",
+          source: "ios",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "学生", "知识工作者"],
+          keywords: ["ai", "助手", "搜索", "问答", "google"],
+          fact: "iOS 端 Google Gemini 应用。"
+        },
+        {
+          name: "Obsidian",
+          url: "https://apps.apple.com/us/app/obsidian-connected-notes/id1557175442",
+          source: "ios",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "研究人员", "创作者"],
+          keywords: ["笔记", "知识库", "markdown", "双链", "沉淀"],
+          fact: "iOS 端 Obsidian 应用，支持移动端知识库访问和同步。"
+        },
+        {
+          name: "ChatGPT",
+          url: "https://play.google.com/store/apps/details?id=com.openai.chatgpt",
+          source: "play",
+          category: "AI 助手 / 通用智能体",
+          audience: ["通用用户", "知识工作者", "开发者"],
+          keywords: ["ai", "助手", "问答", "写作", "代码", "搜索"],
+          fact: "Google Play 上的 ChatGPT 应用。"
+        },
+        {
+          name: "Perplexity - Ask Anything",
+          url: "https://play.google.com/store/apps/details?id=ai.perplexity.app.android",
+          source: "play",
+          category: "AI 搜索 / 问答",
+          audience: ["知识工作者", "研究人员", "学生"],
+          keywords: ["ai", "搜索", "问答", "研究", "答案", "引用"],
+          fact: "Google Play 上的 Perplexity 应用。"
+        },
+        {
+          name: "Notion",
+          url: "https://play.google.com/store/apps/details?id=notion.id",
+          source: "play",
+          category: "生产力 / 协作",
+          audience: ["产品经理", "知识工作者", "团队 / 企业"],
+          keywords: ["笔记", "文档", "任务", "知识库", "ai", "团队"],
+          fact: "Google Play 上的 Notion 应用。"
+        },
+        {
+          name: "Google NotebookLM",
+          url: "https://play.google.com/store/apps/details?id=com.google.android.apps.labs.language.tailwind",
+          source: "play",
+          category: "个人知识库 / 研究",
+          audience: ["学生", "研究人员", "知识工作者"],
+          keywords: ["知识库", "资料", "研究", "文档", "总结", "问答"],
+          fact: "Google Play 上的 NotebookLM 应用入口。"
+        },
+        {
+          name: "Obsidian",
+          url: "https://play.google.com/store/apps/details?id=md.obsidian",
+          source: "play",
+          category: "个人知识库 / 研究",
+          audience: ["知识工作者", "研究人员", "创作者"],
+          keywords: ["笔记", "知识库", "markdown", "双链", "沉淀"],
+          fact: "Google Play 上的 Obsidian 应用。"
+        },
+        {
+          name: "DeepSeek",
+          url: "https://play.google.com/store/apps/details?id=com.deepseek.chat",
+          source: "play",
+          category: "AI 助手 / 通用智能体",
+          audience: ["开发者", "学生", "知识工作者"],
+          keywords: ["ai", "助手", "推理", "代码", "问答"],
+          fact: "Google Play 上的 DeepSeek 应用。"
+        }
+      ];
+
+      const SOURCE_LABEL = { web: "Web 网站", ios: "iOS App Store", play: "Google Play" };
+      const SOURCE_CLASS = { web: "web", ios: "ios", play: "play" };
+      const STOP_WORDS = new Set(["一个", "一种", "可以", "能够", "帮助", "用户", "产品", "工具", "网站", "应用", "app", "web", "the", "and", "for", "with"]);
+      let activeSources = new Set(["web", "ios", "play"]);
+      let currentResults = [];
+
+      const ideaInput = document.getElementById("ideaInput");
+      const resultList = document.getElementById("resultList");
+      const categoryFilter = document.getElementById("categoryFilter");
+      const audienceFilter = document.getElementById("audienceFilter");
+      const sourceFilter = document.getElementById("sourceFilter");
+      const sortMode = document.getElementById("sortMode");
+
+      ideaInput.value = SAMPLE_IDEA;
+
+      function tokenize(text) {
+        const lower = text.toLowerCase();
+        const english = lower.match(/[a-z0-9][a-z0-9+.-]{1,}/g) || [];
+        const chinese = lower.match(/[\u4e00-\u9fa5]{2,}/g) || [];
+        const shortTerms = ["ai", "搜索", "知识库", "笔记", "协作", "团队", "内容", "设计", "社区", "开发", "任务", "项目", "学习", "消费", "写作", "研究"].filter((term) =>
+          lower.includes(term)
+        );
+        return [...new Set([...english, ...chinese, ...shortTerms])].filter((item) => item.length > 1 && !STOP_WORDS.has(item)).slice(0, 14);
+      }
+
+      function scoreProduct(product, keywords, idea) {
+        const haystack = `${product.name} ${product.category} ${product.audience.join(" ")} ${product.keywords.join(" ")} ${product.fact}`.toLowerCase();
+        const hits = [...new Set(keywords.filter((keyword) => haystack.includes(keyword.toLowerCase())))];
+        const directHits = product.keywords.filter((keyword) => idea.toLowerCase().includes(keyword.toLowerCase()));
+        const sourceBoost = product.source === "web" ? 2 : 5;
+        const score = Math.max(42, Math.min(96, 46 + hits.length * 8 + directHits.length * 7 + sourceBoost));
+        return { score, hits, directHits };
+      }
+
+      function buildReason(product, match, ideaCategory) {
+        const hitText = match.hits.slice(0, 4).join("、");
+        if (hitText) {
+          return `命中了你想法中的「${hitText}」，且公开定位同属「${product.category}」；建议优先体验它的首屏定位、核心流程和付费入口。`;
+        }
+        return `与「${ideaCategory}」相邻，适合作为边界竞品观察需求是否外溢到该分类。`;
+      }
+
+      function inferIdeaCategory(results) {
+        const top = countBy(results.slice(0, 8), "category")[0];
+        return top ? top.name : "待探索产品方向";
+      }
+
+      function countBy(items, field) {
+        const map = new Map();
+        for (const item of items) {
+          const values = Array.isArray(item[field]) ? item[field] : [item[field]];
+          for (const value of values) map.set(value, (map.get(value) || 0) + 1);
+        }
+        return [...map].map(([name, count]) => ({ name, count, ratio: Math.round((count / Math.max(items.length, 1)) * 100) })).sort((a, b) => b.count - a.count);
+      }
+
+      function runMatch() {
+        const idea = ideaInput.value.trim();
+        const keywords = tokenize(idea);
+        const prelim = PRODUCTS.filter((product) => activeSources.has(product.source)).map((product) => {
+          const match = scoreProduct(product, keywords, idea);
+          return { ...product, ...match };
+        }).sort((a, b) => b.score - a.score);
+        const ideaCategory = inferIdeaCategory(prelim);
+        currentResults = prelim.map((product) => ({
+          ...product,
+          reason: buildReason(product, product, ideaCategory),
+          inference: "PM 推断：分类、人群和相似度由内置竞品库、关键词命中和输入想法规则生成。"
+        }));
+        updateFilters();
+        render();
+      }
+
+      function getVisibleResults() {
+        const c = categoryFilter.value;
+        const a = audienceFilter.value;
+        const s = sourceFilter.value;
+        const filtered = currentResults.filter((item) => {
+          return (c === "all" || item.category === c) && (a === "all" || item.audience.includes(a)) && (s === "all" || item.source === s);
+        });
+        return filtered.sort((x, y) => {
+          if (sortMode.value === "category") return x.category.localeCompare(y.category, "zh-CN");
+          if (sortMode.value === "name") return x.name.localeCompare(y.name, "zh-CN");
+          return y.score - x.score;
+        });
+      }
+
+      function updateFilters() {
+        const previous = { c: categoryFilter.value, a: audienceFilter.value, s: sourceFilter.value };
+        const categories = [...new Set(currentResults.map((item) => item.category))].sort();
+        const audiences = [...new Set(currentResults.flatMap((item) => item.audience))].sort();
+        categoryFilter.innerHTML = `<option value="all">全部分类</option>${categories.map((item) => `<option value="${item}">${item}</option>`).join("")}`;
+        audienceFilter.innerHTML = `<option value="all">全部目标人群</option>${audiences.map((item) => `<option value="${item}">${item}</option>`).join("")}`;
+        sourceFilter.innerHTML = `<option value="all">全部来源</option>${[...activeSources].map((item) => `<option value="${item}">${SOURCE_LABEL[item]}</option>`).join("")}`;
+        categoryFilter.value = categories.includes(previous.c) ? previous.c : "all";
+        audienceFilter.value = audiences.includes(previous.a) ? previous.a : "all";
+        sourceFilter.value = activeSources.has(previous.s) ? previous.s : "all";
+      }
+
+      function externalSearchUrl(source, idea) {
+        if (source === "ios") return `https://www.apple.com/search/${encodeURIComponent(idea)}?src=globalnav`;
+        if (source === "play") return `https://play.google.com/store/search?q=${encodeURIComponent(idea)}&c=apps`;
+        return `https://www.bing.com/search?q=${encodeURIComponent(idea + " 竞品 产品 工具")}`;
+      }
+
+      function render() {
+        const visible = getVisibleResults();
+        document.getElementById("resultCount").textContent = currentResults.length ? `找到 ${visible.length} / ${currentResults.length} 个结果` : "等待匹配";
+        document.getElementById("resultHint").textContent = currentResults.length ? `关键词：${tokenize(ideaInput.value).join("、") || "暂无"}` : "静态版适合先做方向验证；需要实时全网搜索时，用仓库里的本地完整版。";
+        document.getElementById("sourceHint").textContent = sortMode.value === "score" ? "相似度优先" : sortMode.value === "category" ? "分类聚合" : "名称排序";
+
+        if (!visible.length) {
+          resultList.innerHTML = `<div class="empty"><div><div class="empty-icon">⌕</div><h2>暂无匹配结果</h2><p class="subtle">换一个描述，或打开外部搜索链接继续挖产品。</p></div></div>`;
+        } else {
+          resultList.innerHTML = visible
+            .map(
+              (item) => `
+              <article class="result-row">
+                <div class="product">
+                  <div class="avatar">${item.name.slice(0, 1).toUpperCase()}</div>
+                  <div><h3>${item.name}</h3><p>${new URL(item.url).hostname.replace(/^www\\./, "")}</p></div>
+                </div>
+                <div class="chips"><span class="source ${SOURCE_CLASS[item.source]}">${SOURCE_LABEL[item.source]}</span><span class="chip">${item.category}</span></div>
+                <div class="audience">${item.audience.map((audience) => `<span class="chip">${audience}</span>`).join("")}</div>
+                <div class="score"><span>${item.score}%</span><div class="track"><span style="width:${item.score}%"></span></div></div>
+                <div class="reason"><p>${item.reason}</p><small>公开事实：${item.fact}</small><small>${item.inference}</small></div>
+                <div class="row-actions"><a class="open-link" href="${item.url}" target="_blank" rel="noreferrer">体验 ↗</a><a class="search-link" href="${externalSearchUrl(item.source, ideaInput.value)}" target="_blank" rel="noreferrer">继续搜 ↗</a></div>
+              </article>`
+            )
+            .join("");
+        }
+        renderInsights(visible);
+      }
+
+      function renderInsights(results) {
+        const categories = countBy(results, "category").slice(0, 5);
+        const audiences = countBy(results.flatMap((item) => item.audience.map((audience) => ({ audience }))), "audience").slice(0, 5);
+        document.getElementById("totalNumber").textContent = results.length;
+        document.getElementById("ideaCategory").textContent = categories[0]?.name || "匹配后生成";
+        document.getElementById("topProducts").textContent = results.length ? `优先看：${results.slice(0, 5).map((item) => item.name).join("、")}` : "等待匹配。";
+        document.getElementById("categoryBars").innerHTML = renderBars(categories);
+        document.getElementById("audienceBars").innerHTML = renderBars(audiences);
+      }
+
+      function renderBars(items) {
+        if (!items.length) return `<p class="subtle">暂无数据。</p>`;
+        return items
+          .map(
+            (item) => `<div class="bar-item"><div><span>${item.name}</span><strong>${item.ratio}%</strong></div><div class="bar"><span style="width:${Math.max(item.ratio, 8)}%"></span></div></div>`
+          )
+          .join("");
+      }
+
+      function exportMarkdown() {
+        const visible = getVisibleResults();
+        const lines = [
+          `# 竞品调研：${ideaInput.value.trim()}`,
+          "",
+          `生成时间：${new Date().toLocaleString("zh-CN")}`,
+          "",
+          "## 竞品列表",
+          ...visible.map((item, index) => `${index + 1}. [${item.name}](${item.url})｜${SOURCE_LABEL[item.source]}｜${item.category}｜目标人群：${item.audience.join("、")}｜相似度：${item.score}%\n   - 相似点：${item.reason}\n   - 公开事实：${item.fact}\n   - ${item.inference}`),
+          "",
+          "## 下一步",
+          "- 打开相似度最高的 5 个产品，记录首屏定位、核心流程和付费入口。",
+          "- 对同分类竞品做功能拆解，区分基础能力和差异化能力。",
+          "- 用外部搜索链接继续补充长尾产品。"
+        ];
+        const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `竞品调研-${new Date().toISOString().slice(0, 10)}.md`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      document.querySelectorAll(".source-toggle").forEach((button) => {
+        button.addEventListener("click", () => {
+          const source = button.dataset.source;
+          if (activeSources.has(source) && activeSources.size === 1) return;
+          activeSources.has(source) ? activeSources.delete(source) : activeSources.add(source);
+          button.classList.toggle("active", activeSources.has(source));
+          runMatch();
+        });
+      });
+
+      document.getElementById("runBtn").addEventListener("click", runMatch);
+      document.getElementById("rerunBtn").addEventListener("click", runMatch);
+      document.getElementById("sampleBtn").addEventListener("click", () => {
+        ideaInput.value = SAMPLE_IDEA;
+        runMatch();
+      });
+      document.getElementById("exportBtn").addEventListener("click", exportMarkdown);
+      [categoryFilter, audienceFilter, sourceFilter, sortMode].forEach((node) => node.addEventListener("change", render));
+    </script>
+  </body>
+</html>
