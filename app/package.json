@@ -1,0 +1,29 @@
+{
+  "name": "competitor-radar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,green \"node server/index.js\" \"vite --host 127.0.0.1 --port 5178\"",
+    "worker:dev": "npm run build && wrangler dev --port 8787",
+    "deploy": "npm run build && wrangler deploy",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5178",
+    "serve": "NODE_ENV=production node server/index.js",
+    "research:sample": "node server/research.js \"AI 搜索和个人知识库结合的生产力工具\""
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "cheerio": "^1.0.0",
+    "concurrently": "^9.1.2",
+    "express": "^4.21.2",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^6.0.7"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.0",
+    "wrangler": "^4.102.0"
+  }
+}

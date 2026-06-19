@@ -1,0 +1,12 @@
+{
+  "rows": 42,
+  "scrollWidth": 390,
+  "clientWidth": 390,
+  "hasHorizontalOverflow": false,
+  "resultRowsOverflow": false,
+  "sourceLabels": [
+    "iOS App Store",
+    "Google Play",
+    "Web 网站"
+  ]
+}
